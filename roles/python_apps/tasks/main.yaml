@@ -1,0 +1,52 @@
+---
+- name: Ensure deployment folder exists
+  file:
+    path: "{{ deployment_folder }}"
+    state: directory
+
+- name: Copy wheel file to deployment folder 
+  copy: 
+    src: "roles/python_apps/files/{{ wheel_file }}"    
+    dest: "{{ deployment_folder }}/{{ wheel_file }}"
+    mode: 0644
+
+- name: Create a virtual environment
+  command: python -m venv {{ deployment_folder }}/venv
+  args: 
+    creates: "{{ deployment_folder }}/venv"
+
+- name: Install the application wheel file
+  pip: 
+    requirements: "{{ deployment_folder }}/{{ wheel_file }}"
+    virtualenv: "{{ deployment_folder }}/venv"
+
+- name: Create instance directory
+  file:
+    path: "{{ instance_path }}"
+    state: directory
+
+- name: Deploy config.py
+  template:
+    src: config.py.j2
+    dest: "{{ instance_path }}/config.py"
+
+- name: Deploy run.sh 
+  template: 
+    src: run.sh.j2
+    dest: "{{ deployment_folder }}/run.sh"
+
+- name: Deploy systemd service
+  template: 
+    src: "templates/example.service.j2"
+    dest: "/etc/systemd/system/example.service"
+    mode: 0644
+
+- name: Reload systemd service
+  systemd:
+    daemon_reload: yes 
+
+- name: Ensure example service is started and enabled 
+  systemd:
+    name: example
+    state: started 
+    enabled: yes

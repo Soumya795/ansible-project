@@ -1,0 +1,5 @@
+port: 5000
+deployment_folder: /opt/example
+wheel_file: Example-1.1.1-py3-none-any.whl
+instance_path: /opt/example/instance
+admin_groups: ["Read-only", "Read-write", "Super"]  

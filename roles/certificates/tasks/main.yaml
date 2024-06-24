@@ -1,0 +1,27 @@
+---
+- name: Copy custom CA certificates to the target 
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/share/ca-certificates/
+    owner: root
+    group: root
+    mode: '0644'
+  loop: 
+    - CA1.crt
+    - CA2.crt
+    - CA3.crt
+
+- name: Copy custom CA keys to the target
+  copy: 
+    src: "{{ item }}"
+    dest: /etc/ssl/private/
+    owner: root
+    group: root
+    mode: '0600'
+  loop: 
+    - CA1.key
+    - CA2.key
+    - CA3.key
+
+- name: Update CA certificates
+  command: update-ca-certificates

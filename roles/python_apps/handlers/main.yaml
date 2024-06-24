@@ -1,0 +1,11 @@
+---
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes 
+
+- name: Ensure example service is started and enabled 
+  systemd:
+    name: example
+    state: started
+    enabled: yes 
+    
